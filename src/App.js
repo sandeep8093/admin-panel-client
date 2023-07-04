@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { Container, AppBar, Toolbar, Typography } from '@material-ui/core';
+import LoginForm from './components/LoginForm';
+import UploadForm from './components/UploadForm';
+import EditForm from './components/EditForm';
+import ProductList from './components/ProductList';
+import Navbar from './components/Navbar';
+import SingleProductPage from './components/SingleProductPage';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Navbar />
+      <Container>
+        <Routes>
+          <Route path="/" element={<LoginForm />} />
+          <Route path="/product_create" element={<UploadForm />} />
+          <Route path="/product_update/:id" element={<EditForm />} />
+          <Route path="/product_all" element={<ProductList />} />
+          <Route path="/product/:id" element={<SingleProductPage />} />
+        </Routes>
+      </Container>
+    </Router>
   );
 }
 
