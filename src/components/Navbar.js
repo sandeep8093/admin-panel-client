@@ -93,14 +93,25 @@ function Navbar() {
           ADMIN_PANEL
         </AnimatedTypography>
         <div className={classes.navLinks}>
-        {!isLoginForm && (
+        {/* {!isLoginForm && (
           <AnimatedTypography variant="subtitle1" component={Link} to="/product_create" className={classes.link}>
-            ADD NEW PRODUCT
+            ADD NEW LANGUAGE
           </AnimatedTypography>
+          
           )}
-          <AnimatedTypography variant="subtitle1" component={Link} to="/product_all" className={classes.link}>
-            PRODUCT LIST
+          {!isLoginForm && (
+          <AnimatedTypography variant="subtitle1" component={Link} to="/product_create" className={classes.link}>
+            ADD NEW EXERCISE
           </AnimatedTypography>
+          )} */}
+          {!isLoginForm && (
+          <AnimatedTypography variant="subtitle1" component={Link} to="/language/list-all" className={classes.link}>
+            LANGUAGE LIST
+          </AnimatedTypography>)}
+          {!isLoginForm && (
+          <AnimatedTypography variant="subtitle1" component={Link} to="/exercise/list-all" className={classes.link}>
+            EXERCISE LIST
+          </AnimatedTypography>)}
           {!isLoginForm && (
           <Button variant="subtitle1" color="inherit" onClick={handleLogout} className={classes.link}>
           LOGOUT

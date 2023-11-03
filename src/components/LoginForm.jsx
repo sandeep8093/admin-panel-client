@@ -33,7 +33,7 @@ function LoginForm() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('https://admin-panel-server-up96.onrender.com/auth/login', {
+      const response = await axios.post('https://learning-up-server.onrender.com/user/login', {
         email,
         password,
       });
@@ -42,7 +42,7 @@ function LoginForm() {
 
       // Store the token in local storage or a state variable for future use
       localStorage.setItem('token', token);
-      navigate('/product_all');
+      navigate('/language/list-all');
     } catch (error) {
       // Handle error when unable to make the request
       setError('An error occurred');

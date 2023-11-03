@@ -4,9 +4,8 @@ import { Grid, Typography, List, ListItem, Button, makeStyles, Box } from '@mate
 import axios from 'axios';
 import { FiberManualRecord } from '@material-ui/icons';
 
-
 const useStyles = makeStyles((theme) => ({
-  productItem: {
+  languageItem: {
     border: `1px solid ${theme.palette.grey[200]}`,
     padding: theme.spacing(1),
     marginTop: theme.spacing(3),
@@ -24,11 +23,11 @@ const useStyles = makeStyles((theme) => ({
     margin: '0 auto',
     padding: theme.spacing(2),
     fontSize: 50,
-    marginTop: theme.spacing(10),
+    marginTop: theme.spacing(2),
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  productImage: {
+  languageImage: {
     width: '100%',
     height: 'auto',
     marginBottom: theme.spacing(1),
@@ -46,74 +45,67 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(0, 6),
   },
-  createLink: {
-    textDecoration: 'none',
+  titleContainer: {
+    background: '#f0f0f0',
+    padding: theme.spacing(4),
+    marginTop: theme.spacing(10),
+  },
+  title: {
+    fontWeight: 'bold',
+    color: '#333',
   },
 }));
 
-function productList() {
+function LanguageList() {
   const classes = useStyles();
-  const [products, setproducts] = useState([]);
+  const [languages, setLanguages] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const [refreshKey, setRefreshKey] = useState(0);
   useEffect(() => {
-    const fetchproducts = async () => {
+    const fetchLanguages = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.post(
-          'https://admin-panel-server-up96.onrender.com/product/all',
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              
-            },
-            
-        // mode: 'no-cors',
-        // credentials: 'same-origin',
-          }
-        );
+        const response = await axios.get('https://learning-up-server.onrender.com/language/list-all', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const { data } = response;
-        setproducts(data);
+        setLanguages(data);
       } catch (error) {
-        console.error('Failed to fetch products:', error);
-        setError('Failed to fetch products');
+        console.error('Failed to fetch languages:', error);
+        setError('Failed to fetch languages');
       }
     };
 
-    fetchproducts();
+    fetchLanguages();
   }, []);
 
-  const handleDelete = async (productId) => {
+  const handleDelete = async (languageId) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
         setError('Token Not Found');
         console.log('Token not given');
       }
-      const response = await axios.post(
-        `https://admin-panel-server-up96.onrender.com/product/delete/${productId}`,
-        {},
+      const response = await axios.delete(
+        `https://learning-up-server.onrender.com/language/delete/${languageId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      
-      console.log(response.status)
+
+      console.log(response.status);
       if (response.status === 200) {
-        // setRefreshKey(refreshKey + 1);
-        // window.location.reload();
-        navigate('/product_all');
+        navigate('/language/list-all');
       } else {
         setError('delete failed');
       }
-      
     } catch (error) {
-      console.error('Failed to delete product:', error);
+      console.error('Failed to delete language:', error);
     }
   };
 
@@ -121,41 +113,50 @@ function productList() {
     return <Typography color="error">{error}</Typography>;
   }
 
-  if (products.length === 0) {
-    return <Typography>No products available</Typography>;
+  if (languages.length === 0) {
+    return <Typography>No languages available</Typography>;
   }
+
 
   return (
     <>
-      <ListItem className={classes.container}>All products</ListItem>
+      <ListItem className={classes.titleContainer}>
+        <Typography variant="h4" className={classes.title}>
+          All languages
+        </Typography>
+      </ListItem>
+      <ListItem className={classes.container}>
+        <Button
+          className={classes.button}
+          component={Link}
+          to={`/language/add`}
+          variant="outlined"
+          color="primary"
+        >
+          Create Language
+        </Button>
+      </ListItem>
 
       <Grid container spacing={2}>
-        {products.map((product) => (
-          <Grid item xs={12} sm={6} md={4} key={product._id}>
-            <List className={classes.productItem}>
-              <Typography component={Link} to={`/product/${product._id}`}>
-               <img src={product.img} className={classes.productImage} alt="product" /> 
+        {languages.map((language) => (
+          <Grid item xs={12} sm={6} md={4} key={language._id}>
+            <List className={classes.languageItem}>
+              <Typography component={Link} to={`/language/${language._id}`}>
+                <img src={language.imageUrl} className={classes.languageImage} alt="language" />
               </Typography>
               <ListItem>
-                <Typography variant="h6">{product.title}</Typography>
+                <Typography variant="h6">{language.name}</Typography>
               </ListItem>
-
-              <ListItem>
-                <Box className={classes.colorContainer}>
-                  <Typography>Available Colors:</Typography>
-                  {product.color.map((color, index) => (
-                    <FiberManualRecord key={index} className={classes.colorIcon} style={{ color }} />
-                  ))}
-                </Box>
-              </ListItem>
-              <ListItem>
-                <Typography>Price: ${product.price}</Typography>
-              </ListItem>
+              {language.exercises && (
+                <ListItem>
+                  <Typography>Total Exercises Available: {language.exercises.length}</Typography>
+                </ListItem>
+              )}
               <ListItem>
                 <Button
                   className={classes.button}
                   component={Link}
-                  to={`/product_update/${product._id}`}
+                  to={`/language/update/${language._id}`}
                   variant="outlined"
                   color="primary"
                 >
@@ -163,8 +164,7 @@ function productList() {
                 </Button>
                 <Button
                   className={classes.button}
-                  component={Link} to={`/product_all`}
-                  onClick={() => handleDelete(product._id)}
+                  onClick={() => handleDelete(language._id)}
                   variant="outlined"
                   color="secondary"
                 >
@@ -179,4 +179,4 @@ function productList() {
   );
 }
 
-export default productList;
+export default LanguageList;
